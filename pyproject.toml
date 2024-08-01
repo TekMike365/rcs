@@ -1,0 +1,22 @@
+[project]
+name = "rcs"
+version = "0.1.0a1"
+dependencies = []
+requires-python = ">=3.10"
+authors = [{ name = "TekMike365" }]
+maintainers = [{ name = "TekMike365" }]
+description = "a silly python full-stack web server"
+readme = "README.md"
+license = { file = "LICENSE" }
+keywords = ["web", "server", "frontend", "backend", "full-stack"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python",
+]
+
+[project.urls]
+Repository = "https://github.com/TekMike365/rcs"
+Issues = "https://github.com/TekMike365/rcs/issues"
+
+[project.scripts]
+rcs = "rcs.cli:main"
