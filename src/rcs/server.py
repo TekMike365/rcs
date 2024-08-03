@@ -7,6 +7,7 @@ class ServerConfig:
     host: str = "127.0.0.1"
     port: int = 8080
     timeout_sec: float | None = 0.0
+    reuse_addr: bool = True
 
 
 class Server:
@@ -26,8 +27,12 @@ class Server:
             raise Exception("Uh-oh! Something went wrong.")
 
         self._soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._soc.setsockopt(
+            socket.SOL_SOCKET, socket.SO_REUSEADDR, self.cfg.reuse_addr
+        )
         self._soc.settimeout(self.cfg.timeout_sec)
         self._soc.bind((self.cfg.host, self.cfg.port))
+
         self._soc.listen(10)
 
         self._thr = threading.Thread(target=self._handle_connections)
@@ -48,9 +53,6 @@ class Server:
         while isinstance(self._soc, socket.socket):
             try:
                 conn, addr = self._soc.accept()
-
-                print(f"connected @ {addr}")
-
                 conn.close()
             except OSError as e:
                 en = e.args[0]
