@@ -64,6 +64,24 @@ class TestServer(unittest.TestCase):
 
         self.server.stop()
 
+    def test_rec_buff_size(self):
+        """Test if a message of servers data_buf length is properly recieved."""
+        self.server.start()
+
+        msg = "L" * self.server.cfg.data_buf
+        self.assertEqual(self.send_msg(msg), msg)
+
+        self.server.stop()
+
+    def test_rec_buff_plus_size(self):
+        """Test if a message of higher than servers data_buf length is properly recieved."""
+        self.server.start()
+
+        msg = "L" * (self.server.cfg.data_buf + 50)
+        self.assertEqual(self.send_msg(msg), msg[:-50])
+
+        self.server.stop()
+
     def test_socket(self):
         """Test if a socket is created at a correct address"""
         self.server.start()

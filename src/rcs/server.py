@@ -74,7 +74,6 @@ class Server:
                 en = e.args[0]
                 if en == errno.EAGAIN or e == errno.EWOULDBLOCK:
                     continue
-
                 break
 
     def _recieve_request(self, soc: socket.socket) -> str:
