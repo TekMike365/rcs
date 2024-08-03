@@ -1,5 +1,4 @@
 import socket
-import time
 import unittest
 
 from src.rcs.server import Server, ServerConfig
