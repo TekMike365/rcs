@@ -1,7 +1,7 @@
 import socket
 import unittest
 
-from src.rcs.server import Server
+from src.rcs.server import Server, ServerConfig
 
 
 class TestServer(unittest.TestCase):
@@ -9,7 +9,10 @@ class TestServer(unittest.TestCase):
     PORT = 8080
 
     def setUp(self) -> None:
-        self.server = Server(self.HOST, self.PORT)
+        server_cfg = ServerConfig()
+        server_cfg.host = self.HOST
+        server_cfg.port = self.PORT
+        self.server = Server(server_cfg)
 
     def check_connection(self) -> bool:
         """

@@ -1,11 +1,12 @@
 import socket
 import threading
 
+from .config import ServerConfig
+
 
 class Server:
-    def __init__(self, host: str, port: int) -> None:
-        self.host = host
-        self.port = port
+    def __init__(self, cfg: ServerConfig) -> None:
+        self.cfg = cfg
         self._soc: socket.socket | None = None
         self._thr: threading.Thread | None = None
 
@@ -20,7 +21,7 @@ class Server:
             raise Exception("Uh-oh! Something went wrong.")
 
         self._soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._soc.bind((self.host, self.port))
+        self._soc.bind((self.cfg.host, self.cfg.port))
         self._soc.listen(10)
 
         self._thr = threading.Thread(target=self._handle_connections)
@@ -38,4 +39,6 @@ class Server:
         self._thr = None
 
     def _handle_connections(self):
-        pass
+        while isinstance(self._soc, socket.socket):
+            conn, addr = self._soc.accept()
+            print(f"connected @ {addr}")
