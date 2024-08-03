@@ -1,7 +1,12 @@
+import errno
 import socket
 import threading
 
-from .config import ServerConfig
+
+class ServerConfig:
+    host: str = "127.0.0.1"
+    port: int = 8080
+    timeout_sec: float | None = 0.0
 
 
 class Server:
@@ -21,6 +26,7 @@ class Server:
             raise Exception("Uh-oh! Something went wrong.")
 
         self._soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._soc.settimeout(self.cfg.timeout_sec)
         self._soc.bind((self.cfg.host, self.cfg.port))
         self._soc.listen(10)
 
@@ -34,11 +40,21 @@ class Server:
         self._soc.close()
         self._soc = None
 
-        if self._thr is threading.Thread and self._thr.is_alive():
+        if isinstance(self._thr, threading.Thread) and self._thr.is_alive():
             self._thr.join()
         self._thr = None
 
     def _handle_connections(self):
         while isinstance(self._soc, socket.socket):
-            conn, addr = self._soc.accept()
-            print(f"connected @ {addr}")
+            try:
+                conn, addr = self._soc.accept()
+
+                print(f"connected @ {addr}")
+
+                conn.close()
+            except OSError as e:
+                en = e.args[0]
+                if en == errno.EAGAIN or e == errno.EWOULDBLOCK:
+                    continue
+
+                break

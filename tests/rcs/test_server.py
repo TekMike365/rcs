@@ -1,4 +1,5 @@
 import socket
+import time
 import unittest
 
 from src.rcs.server import Server, ServerConfig
@@ -34,6 +35,13 @@ class TestServer(unittest.TestCase):
         self.server.start()
         self.assertEqual(self.check_connection(), True)
         self.server.stop()
+
+    def test_socket_closed(self):
+        """Test if a socket is properly closed"""
+        self.server.start()
+        self.assertEqual(self.check_connection(), True)
+        self.server.stop()
+        self.assertEqual(self.check_connection(), False)
 
     def test_stop_on_stopped(self):
         """Stopping already stopped server should do nothing."""
