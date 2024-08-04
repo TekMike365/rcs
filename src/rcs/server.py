@@ -20,6 +20,9 @@ class Server:
         self._soc: socket.socket | None = None
         self._thr: threading.Thread | None = None
 
+    def is_running(self) -> bool:
+        return isinstance(self._soc, socket.socket)
+
     def get_socket(self) -> socket.socket | None:
         return self._soc
 

@@ -62,6 +62,13 @@ class TestServer(unittest.TestCase):
 
         return response.decode("ascii")
 
+    def test_is_runninng(self):
+        self.assertFalse(self.server.is_running())
+        self.server.start()
+        self.assertTrue(self.server.is_running())
+        self.server.stop()
+        self.assertFalse(self.server.is_running())
+
     def test_setUp(self):
         """A test for my unittests setUp function."""
         self.server.start()
