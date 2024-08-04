@@ -14,11 +14,18 @@ class TestServer(unittest.TestCase):
     HOST = "127.0.0.1"
     PORT = 8080
 
+    def __init__(self, methodName: str = "runTest") -> None:
+        self.server = Server(ServerConfig(), RequestHandler())
+        super().__init__(methodName)
+
     def setUp(self) -> None:
         server_cfg = ServerConfig()
         server_cfg.host = self.HOST
         server_cfg.port = self.PORT
         self.server = Server(server_cfg, EchoRH())
+
+    def tearDown(self) -> None:
+        self.server.stop()
 
     def check_connection(self) -> bool:
         """
@@ -55,8 +62,13 @@ class TestServer(unittest.TestCase):
 
         return response.decode("ascii")
 
+    def test_setUp(self):
+        """A test for my unittests setUp function."""
+        self.server.start()
+
     def test_rec_send(self):
         """Test if a message is properly recieved and send."""
+
         self.server.start()
 
         msg = "Hello! This is a very sophysticated test."
@@ -66,6 +78,7 @@ class TestServer(unittest.TestCase):
 
     def test_rec_buff_size(self):
         """Test if a message of servers data_buf length is properly recieved."""
+
         self.server.start()
 
         msg = "L" * self.server.cfg.data_buf
@@ -75,6 +88,7 @@ class TestServer(unittest.TestCase):
 
     def test_rec_buff_plus_size(self):
         """Test if a message of higher than servers data_buf length is properly recieved."""
+
         self.server.start()
 
         msg = "L" * (self.server.cfg.data_buf + 50)
@@ -84,35 +98,40 @@ class TestServer(unittest.TestCase):
 
     def test_socket(self):
         """Test if a socket is created at a correct address"""
+
         self.server.start()
-        self.assertEqual(self.check_connection(), True)
+        self.assertTrue(self.check_connection())
         self.server.stop()
 
     def test_socket_closed(self):
         """Test if a socket is properly closed"""
+
         self.server.start()
-        self.assertEqual(self.check_connection(), True)
+        self.assertTrue(self.check_connection())
         self.server.stop()
-        self.assertEqual(self.check_connection(), False)
+        self.assertFalse(self.check_connection())
 
     def test_stop_on_stopped(self):
         """Stopping already stopped server should do nothing."""
+
         self.server.stop()
 
     def test_start_on_running(self):
         """Starting already running server should do nothing."""
+
         self.server.start()
-        self.assertEqual(self.check_connection(), True)
+        self.assertTrue(self.check_connection())
         self.server.start()
-        self.assertEqual(self.check_connection(), True)
+        self.assertTrue(self.check_connection())
         self.server.stop()
 
     def test_restart(self):
         """Test proper restarting."""
+
         self.server.start()
-        self.assertEqual(self.check_connection(), True)
+        self.assertTrue(self.check_connection())
         self.server.stop()
 
         self.server.start()
-        self.assertEqual(self.check_connection(), True)
+        self.assertTrue(self.check_connection())
         self.server.stop()

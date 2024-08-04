@@ -20,6 +20,9 @@ class Server:
         self._soc: socket.socket | None = None
         self._thr: threading.Thread | None = None
 
+    def get_socket(self) -> socket.socket | None:
+        return self._soc
+
     def start(self) -> None:
         if isinstance(self._soc, socket.socket) and isinstance(
             self._thr, threading.Thread
@@ -49,8 +52,6 @@ class Server:
         self._soc.close()
         self._soc = None
 
-        if isinstance(self._thr, threading.Thread) and self._thr.is_alive():
-            self._thr.join()
         self._thr = None
 
     def _handle_connections(self) -> None:
